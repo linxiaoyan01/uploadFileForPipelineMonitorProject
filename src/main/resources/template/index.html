@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+<!--    <script>-->
+<!--        $(document).ready(function() {-->
+<!--            $("#ajaxSubmit").click(function () {-->
+<!--                const param = $("#path").val();-->
+<!--                alert(param)-->
+<!--                $.post("localhost:8083/index/upload",{'path':param},-->
+<!--                function success(data){-->
+<!--                    const resp = $.parseJSON(data);-->
+<!--                    alert(resp);-->
+<!--                    $("#result").html(resp.path)-->
+<!--                },"json")-->
+<!--            });-->
+<!--        })-->
+<!--    </script>-->
+</head>
+<body>
+    <div style="display: flex; justify-content: center; align-items: center;flex-direction: column;margin-top: 250px;width: 100%;height: 200px">
+        <span style="font-size: 24px; font-weight: bold">设置读取本地文件的目录地址</span><br/>
+        <form action="#" th:action="@{/index/upload}" method="get" style="display: flex; justify-content: center; align-items: center;flex-direction: column;width: 50%;height: 70%">
+            <input type="text" name="path" style="width: 40%;height: 30%" placeholder="D:/desktop/demandAnalysis/data/" ><br/>
+            <input type="submit" value="提交" class="btn btn-large" style="width: 15%;height: 30%;font-weight: bold;background: blue;color: aliceblue;border-color:white">
+        </form>
+    </div>
+</body>
+</html>
+<style type=”text/css”>
+</style>
+

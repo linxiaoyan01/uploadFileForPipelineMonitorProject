@@ -14,7 +14,7 @@ public class FileUtil {
     /**
      * 列出所有文件名包括该路径下所有文件夹下的文件名
      */
-    public static List<String> getFile(String path) {
+    public static List<String> getFileNames(String path) {
         // get file list where the path has
         File file = new File(path);
         // get the folder list
@@ -26,7 +26,7 @@ public class FileUtil {
                 names.add(name);
                 //System.out.println(array[i].getPath());
             } else if (array[i].isDirectory()) {
-                getFile(array[i].getPath());
+                getFileNames(array[i].getPath());
             }
         }
         return names;

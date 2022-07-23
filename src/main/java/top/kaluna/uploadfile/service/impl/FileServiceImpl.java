@@ -8,6 +8,9 @@ import com.aliyun.oss.model.UploadFileRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import top.kaluna.uploadfile.config.OSSConfig;
+import top.kaluna.uploadfile.domain.LocalFilePath;
+import top.kaluna.uploadfile.domain.LocalFilePathExample;
+import top.kaluna.uploadfile.mapper.LocalFilePathMapper;
 import top.kaluna.uploadfile.service.FileService;
 import top.kaluna.uploadfile.util.FileUtil;
 
@@ -27,26 +30,35 @@ public class FileServiceImpl implements FileService {
     @Resource
     private OSSConfig ossConfig;
 
+    @Resource
+    private LocalFilePathMapper localFilePathMapper;
+
 
     /**
      * 上传本地某个文件夹所有文件
-     * @param path 本地文件夹路径
+     *
      */
     @Override
-    public void fileUpload(String path) {
+    public void fileUpload() {
         //获取相关配置
         String bucketname = ossConfig.getBucketname();
         String endpoint = ossConfig.getEndpoint();
         String accessKeyId = ossConfig.getAccessKeyId();
         String accessKeySecret = ossConfig.getAccessKeySecret();
 
+        LocalFilePathExample example = new LocalFilePathExample();
+        LocalFilePathExample.Criteria criteria = example.createCriteria();
+        criteria.andIdEqualTo(1) ;
+        final List<LocalFilePath> localFilePaths = localFilePathMapper.selectByExample(example);
+
+        String path  = localFilePaths.get(0).getPath();
         //JDK8的日期格式
         LocalDateTime ldt = LocalDateTime.now();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         //拼装路径,oss上存储的路径  data/2022/5/17/log2022-5-9-16-43-55.xlsx
         String folder = dtf.format(ldt);
         //获取原始文件名
-        final List<String> fileNames = FileUtil.getFile(path);
+        final List<String> fileNames = FileUtil.getFileNames(path);
         //创建OSS对象
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
         ObjectMetadata meta = new ObjectMetadata();
@@ -110,7 +122,36 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void deleteFile(String path) {
+    public void deleteFile() {
+        LocalFilePathExample example = new LocalFilePathExample();
+        LocalFilePathExample.Criteria criteria = example.createCriteria();
+        criteria.andIdEqualTo(1) ;
+        final List<LocalFilePath> localFilePaths = localFilePathMapper.selectByExample(example);
+        String path  = localFilePaths.get(0).getPath();
         FileUtil.deleteFile(path);
+    }
+
+    @Override
+    public String setPath(String path) {
+        LocalFilePathExample example = new LocalFilePathExample();
+        LocalFilePathExample.Criteria criteria = example.createCriteria();
+        criteria.andIdEqualTo(1) ;
+        final List<LocalFilePath> localFilePaths = localFilePathMapper.selectByExample(example);
+        String youqingtishi = " 每周日23:00将会定时将指定目录的文件上传到阿里云OSS并删除这个文件夹下的所有文件释放存储空间。";
+        if(localFilePaths.size() == 1){
+            //更新
+            String oldPath =localFilePaths.get(0).getPath();
+            localFilePaths.get(0).setPath(path);
+            localFilePathMapper.updateByExample(localFilePaths.get(0),example);
+
+            return "更新完成，旧的路径："+oldPath+" 更新为："+path + youqingtishi;
+        }else if(localFilePaths.size() == 0){
+            LocalFilePath localFilePath = new LocalFilePath();
+            localFilePath.setPath(path);
+            localFilePath.setId(1);
+            localFilePathMapper.insert(localFilePath);
+            return "提交完成，路径为："+path + youqingtishi;
+        }
+        return "后端异常，请联系管理员。旧的路径为："+localFilePaths.get(0).getPath();
     }
 }

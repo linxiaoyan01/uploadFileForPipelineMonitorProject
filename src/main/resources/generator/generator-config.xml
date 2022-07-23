@@ -22,7 +22,7 @@
         </commentGenerator>
 
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://101.132.252.118:3306/pipelineMonitor?serverTimezone=Asia/Shanghai"
+                        connectionURL="jdbc:mysql://43.138.101.236:3306/pipeline_monitor?serverTimezone=Asia/Shanghai"
                         userId="root"
                         password="yourpassword">
             <property name="nullCatalogMeansCurrent" value="true"/>
@@ -49,6 +49,7 @@
 <!--        <table tableName="fbg_value_info"/>-->
 <!--        <table tableName="fbg_value"/>-->
 <!--        <table tableName="user"/>-->
-        <table tableName="arc"/>
+<!--        <table tableName="arc"/>-->
+        <table tableName="local_file_path"/>
     </context>
 </generatorConfiguration>
